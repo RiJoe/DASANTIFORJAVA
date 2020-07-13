@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dasanti.rsiksystem.mapper.UserMapper">
+    <select id="getLogin" resultType="com.dasanti.rsiksystem.entity.User" parameterType="com.dasanti.rsiksystem.entity.User">
+        SELECT *
+        FROM user
+        WHERE user_name=#{userName} and password=#{password}
+    </select>
+    <resultMap id="userResultMap" type="com.dasanti.rsiksystem.entity.User">
+        <id column="id" property="id"/>
+        <result column="user_name" property="userName"/>
+        <result column="password" property="password"/>
+    </resultMap>
+    <select id="getUserInfo" parameterType="java.lang.String" resultMap="userResultMap" >
+        SELECT
+            id,user_name,password
+        FROM
+            user
+        WHERE user_name = #{userName}
+    </select>
+</mapper>

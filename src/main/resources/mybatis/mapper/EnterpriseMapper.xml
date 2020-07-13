@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dasanti.rsiksystem.mapper.EnterpriseMapper">
+    <resultMap id="enterpriseMap" type="com.dasanti.rsiksystem.entity.Enterprise">
+        <id column="id" property="id"/>
+        <result column="company_name" property="companyName"/>
+        <result column="principal" property="principal"/>
+        <result column="fill_name" property="fillName"/>
+        <result column="fill_number" property="fillNumber"/>
+        <result column="employee_number" property="employeeNumber"/>
+        <result column="address" property="address"/>
+        <result column="lng" property="lng"/>
+        <result column="lat" property="lat"/>
+        <result column="note" property="note"/>
+        <result column="risk_score" property="riskScore"/>
+        <result column="strengthen_training" property="strengthenTraining"/>
+        <result column="major_source_of_danger" property="majorSourceOfDanger"/>
+        <result column="main_risk" property="mainRisk"/>
+        <collection property="concreteEvaluationList" ofType="com.dasanti.rsiksystem.entity.ConcreteEvaluation">
+            <id column="concrete_evaluation_id" property="id"/>
+            <result column="enterprise_id" property="enterpriseId"/>
+            <result column="category_id" property="categoryId"/>
+            <result column="influence_factor_id" property="influenceFactorId"/>
+            <result column="determine_factor" property="determineFactor"/>
+            <result column="score" property="score"/>
+            <result column="photo" property="photo"/>
+            <result column="remark" property="remark"/>
+        </collection>
+    </resultMap>
+    <select id="getAllEnterprise" resultMap="enterpriseMap" >
+        SELECT
+           enterprise.id,company_name,principal,fill_name,fill_number,employee_number,address,lng,lat,note,risk_score,strengthen_training,major_source_of_danger,main_risk,
+            concrete_evaluation.id as concrete_evaluation_id,enterprise_id,category_id,influence_factor_id,determine_factor,score,photo,remark
+        FROM
+            enterprise
+        LEFT JOIN
+            concrete_evaluation
+         ON
+            enterprise.id = concrete_evaluation.enterprise_id
+    </select>
+
+    <select id="getScoreByName" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT
+            score
+        FROM
+            factor_score
+        WHERE
+            name = #{scoreName}
+
+    </select>
+    <resultMap id="getConcreteEvaluationByIdMap" type="com.dasanti.rsiksystem.entity.ConcreteEvaluation">
+        <id column="id" property="id"/>
+        <result column="enterprise_id" property="enterpriseId"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="influence_factor_id" property="influenceFactorId"/>
+        <result column="determine_factor" property="determineFactor"/>
+        <result column="score" property="score"/>
+        <result column="photo" property="photo"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+    <select id="getConcreteEvaluationById" parameterType="java.lang.Integer" resultMap="getConcreteEvaluationByIdMap">
+        SELECT
+        *
+        FROM
+        concrete_evaluation
+        WHERE
+        enterprise_id = #{enterpriseId}
+    </select>
+
+    <select id="getEnterpriseListByName" parameterType="java.lang.String" resultMap="enterpriseMap">
+        SELECT
+           enterprise.id,company_name,principal,fill_name,fill_number,employee_number,address,lng,lat,note,risk_score,strengthen_training,major_source_of_danger,main_risk,
+            concrete_evaluation.id as concrete_evaluation_id,enterprise_id,category_id,influence_factor_id,determine_factor,score,photo,remark
+        FROM
+            enterprise
+        LEFT JOIN
+            concrete_evaluation
+        ON
+            enterprise.id = concrete_evaluation.enterprise_id
+        WHERE
+            company_name LIKE CONCAT('%',#{name},'%')
+    </select>
+</mapper>
